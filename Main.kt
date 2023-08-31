@@ -1,62 +1,78 @@
 package tictactoe
 
-import kotlin.math.max
-import kotlin.math.min
+fun formatStrings(input: String): String = input.replace('_', ' ')
 
-fun checkWinner(input: String): MutableList<String> {
-
-    val win1 = "${input[0]}${input[1]}${input[2]}"
-    val win2 = "${input[3]}${input[4]}${input[5]}"
-    val win3 = "${input[6]}${input[7]}${input[8]}"
-    val win4 = "${input[0]}${input[3]}${input[6]}"
-    val win5 = "${input[1]}${input[4]}${input[7]}"
-    val win6 = "${input[2]}${input[5]}${input[8]}"
-    val win7 = "${input[0]}${input[4]}${input[8]}"
-    val win8 = "${input[2]}${input[4]}${input[6]}"
-
-    val result = mutableListOf<String>()
-
-    if (win1 == "OOO" || win2 == "OOO" || win3 == "OOO" || win4 == "OOO" || win5 == "OOO" || win6 == "OOO" || win7 == "OOO" || win8 == "OOO")
-    {
-        result.add("O")
-    }
-    if (win1 == "XXX" || win2 == "XXX" || win3 == "XXX" || win4 == "XXX" || win5 == "XXX" || win6 == "XXX" || win7 == "XXX" || win8 == "XXX")
-    {
-        result.add("X")
-    }
-    return  result
+fun printScreen(inputArray: Array<Array<String>>){
+    println("---------")
+    println("| ${inputArray[0][0]} ${inputArray[0][1]} ${inputArray[0][2]} |")
+    println("| ${inputArray[1][0]} ${inputArray[1][1]} ${inputArray[1][2]} |")
+    println("| ${inputArray[2][0]} ${inputArray[2][1]} ${inputArray[2][2]} |")
+    println("---------")
 }
 
-fun generateMessage(input: String) {
-    val results = checkWinner(input)
+fun playUser(x: Int, y: Int, inputArray: Array<Array<String>>): Boolean {
 
-    if (results.size == 1) {
-        if (results.contains("O")) println("O wins")
-        else if(results.contains("X")) println("X wins")
-        //else println("Draw")
-    } else if (results.size > 1)
-        println("Impossible")
-    else if (results.size == 0) {
-        val emptyCount = input.count({it == '_'})
-        val xCount = input.count({it == 'X'})
-        val oCount = input.count({it == 'O'})
-
-        if (emptyCount == 0 && max(xCount, oCount) - min(xCount, oCount) == 1) {
-            println("Draw")
-        } else if (emptyCount > 0 && max(xCount, oCount) - min(xCount, oCount) == 0) {
-            println("Game not finished")
-        } else if ( max(xCount, oCount) - min(xCount, oCount) > 1) {
-            println("Impossible")
-        }
+    if(inputArray[x][y] == " ") {
+        inputArray[x][y] = "X"
+        return true
     }
+    else return false
 }
 
 fun main() {
-    val inputStr = readln()
-    println("---------")
-    println("| ${inputStr[0]} ${inputStr[1]} ${inputStr[2]} |")
-    println("| ${inputStr[3]} ${inputStr[4]} ${inputStr[5]} |")
-    println("| ${inputStr[6]} ${inputStr[7]} ${inputStr[8]} |")
-    println("---------")
-    generateMessage(inputStr)
+    val inputArray = arrayOf(
+        arrayOf(" ", " ", " "),
+        arrayOf(" ", " ", " "),
+        arrayOf(" ", " ", " "),
+    )
+
+    var inputString = readln()
+    inputString = formatStrings(inputString)
+
+    inputArray[0][0] = inputString[0].toString()
+    inputArray[0][1] = inputString[1].toString()
+    inputArray[0][2] = inputString[2].toString()
+    inputArray[1][0] = inputString[3].toString()
+    inputArray[1][1] = inputString[4].toString()
+    inputArray[1][2] = inputString[5].toString()
+    inputArray[2][0] = inputString[6].toString()
+    inputArray[2][1] = inputString[7].toString()
+    inputArray[2][2] = inputString[8].toString()
+
+    printScreen(inputArray)
+    var inputStr = readln()
+
+    while (true)
+    {
+        if (inputStr[0].isDigit() && inputStr[2].isDigit())
+            break
+        println("You should enter numbers!")
+        inputStr = readln()
+    }
+
+    var xCord: Int
+    var yCord: Int
+
+    while (true)
+    {
+        var (x,y) = inputStr.split(" ")
+        if (x.toInt() in 1..3 && y.toInt() in 1..3)
+        {
+            xCord = x.toInt()
+            yCord = y.toInt()
+            --xCord
+            --yCord
+            if (playUser(xCord, yCord, inputArray))
+                break
+            else {
+                println("This cell is occupied! Choose another one!")
+            }
+
+        } else {
+            println("Coordinates should be from 1 to 3!")
+        }
+        inputStr = readln()
+    }
+
+    printScreen(inputArray)
 }
